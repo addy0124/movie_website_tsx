@@ -8,6 +8,7 @@ const headers = {
 }
 
 export const fetchDataFromApi = async  <T>(url:string, params?: AxiosRequestConfig['params']): Promise<T> => {
+  console.log("url : ", BASE_URL + url)
     try{
       const { data } = await axios.get(BASE_URL + url ,{
         headers,

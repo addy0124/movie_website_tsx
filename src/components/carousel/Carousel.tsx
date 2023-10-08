@@ -18,10 +18,10 @@ import GenresLable from '../genres/GenresLable';
 import dayjs from 'dayjs';
 
 type Carouselprops = {
-    data:any,
-    loading:string|boolean,
-    endpoint?:string,
-    title?:string
+    data: any,
+    loading: string|boolean,
+    endpoint?: string,
+    title?: string
 }
 
 const Carousel: React.FC<Carouselprops> = ({ data, loading, endpoint, title }) => {

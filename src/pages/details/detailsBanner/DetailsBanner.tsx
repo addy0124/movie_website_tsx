@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
@@ -7,14 +7,22 @@ import Img from '../../../components/lazyLoadImage/Img';
 import { MovieDataContext } from '../../../components/context/MovieDataProvider';
 import ContentWrapper from '../../../components/contentWrapper/ContentWrapper';
 import PosterFallback from "../../../assets/no-poster.png";
-import { Details } from '../../../type/MovieDetailsType';
+import { Actor_Crew_Info, Details, VideoResult } from '../../../type/MovieDetailsType';
 import GenresLable from '../../../components/genres/GenresLable';
+import CircleRating from '../../../components/circleRating/CircleRating';
+import PlayIcon from '../Playbtn';
 
 import './detailsBannerStyled.scss';
+import VideoPopup from '../../../components/videoPopup/VideoPopup';
 
-type DetailsBannerProps = {}
+type DetailsBannerProps = {
+    video: VideoResult;
+    crew: Actor_Crew_Info[];
+}
 
-const DetailsBanner: React.FC<DetailsBannerProps> = ( props ) => {
+const DetailsBanner: React.FC<DetailsBannerProps> = ( {video, crew} ) => {
+    const [show, setShow] = useState<boolean>(false);
+    const [videoId, setVideoId] = useState<string>('');
 
     const { mediaType, id } = useParams();
     const { data, loading } = useFetch<Details>(`/${mediaType}/${id}`);
@@ -22,6 +30,21 @@ const DetailsBanner: React.FC<DetailsBannerProps> = ( props ) => {
     const { bannerurl } = useContext(MovieDataContext);
 
     const _genres = data?.genres?.map((g) => g.id);
+
+    const toHoursAndMinutes = (totalMinutes: number) => {
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        return `${hours}h ${minutes > 0 ? `${minutes}s`: ""}`
+    }
+
+    const director = crew?.filter((f) => f.job === "Director");
+    const writer = crew?.filter ((f)=> f.job === "Screenplay" || f.job === "Story" || f.job === "Writer" );
+
+    const handleVideoPopUp = (show: boolean, id: string) => {
+        setShow(show);
+        setVideoId(id);
+    };
+
 
 
   return (
@@ -34,23 +57,24 @@ const DetailsBanner: React.FC<DetailsBannerProps> = ( props ) => {
                         <Img src={bannerurl.backdrop + data.backdrop_path}/>
                     </div>
                     <div className="opacity-layer"></div>
-                        <ContentWrapper>
+                    <ContentWrapper>
                         <div className='content'>
                             {/* left */}
                             <div className='left'>
-                            {
-                                data.poster_path ? (
-                                <Img 
-                                    className='posterImg' 
-                                    src={bannerurl.backdrop + data.backdrop_path}
-                                />
-                                ): (
-                                <Img
-                                    className="posterImg"
-                                    src={PosterFallback}
-                                />
-                                 )
-                            }
+                                {
+                                    data.poster_path ? (
+                                        <div className='posterImg' >
+                                            <Img   
+                                                src={bannerurl.backdrop + data.poster_path}
+                                            />
+                                        </div>
+                                    ): (
+                                    <Img
+                                        className="posterImg"
+                                        src={PosterFallback}
+                                    />
+                                    )
+                                }
                             </div>
                             {/* right */}
                             <div className='right'>
@@ -67,15 +91,142 @@ const DetailsBanner: React.FC<DetailsBannerProps> = ( props ) => {
                                 <GenresLable data={_genres!} />
 
                                 <div className='row'>
-
+                                <CircleRating
+                                    rating={data.vote_average.toFixed(
+                                        1
+                                    )}
+                                />
+                                    <div className='playbtn'
+                                        onClick={()=>handleVideoPopUp(true, video.key)}
+                                    >
+                                        <PlayIcon />
+                                        <span className="text">
+                                            Watch Trailer
+                                        </span>
+                                    </div>
                                 </div>
+                                
+                                <div className='overview'>
+                                    <div className='heading'>
+                                        Overview
+                                    </div>
+                                    <div className='description'>
+                                        {data.overview}
+                                    </div>
+                                </div>
+
+                                <div className='info'>
+                                    {data.status && (
+                                        <div className='infoItem'>
+                                            <div className='text bold'>
+                                                Status:{" "}
+                                            </div>
+                                            <div className='text'>
+                                                {data.status}
+                                            </div>
+                                            </div>
+                                        )}
+
+                                        {data.release_date && (
+                                            <div className='infoItem'>
+                                                <span className="text bold">
+                                                    Release Date:{" "}
+                                                </span>
+                                                <span className="text">
+                                                    {dayjs(
+                                                         data.release_date
+                                                    ).format("MMM D, YYYY")}
+                                                </span>
+                                            </div>   
+                                        )}
+                                        {data.runtime && (
+                                                <div className="infoItem">
+                                                    <span className="text bold">
+                                                        Runtime:{" "}
+                                                    </span>
+                                                    <span className="text">
+                                                        {toHoursAndMinutes(
+                                                            data.runtime
+                                                        )}
+                                                    </span>
+                                                </div>
+                                        )}
+                                </div>
+
+                                {director?.length > 0 && (
+                                    <div className='info'>
+                                        <span className='text bold'>
+                                            Director:{" "}
+                                        </span>
+                                        <span className='text'>
+                                            {director?.map((d, i)=>(
+                                                <span key={i}>
+                                                    {d.name}
+                                                    {director.length - 1 !== i && ", "}
+                                                </span>
+                                            ))}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {writer?.length > 0 && (
+                                    <div className='info'>
+                                        <span className='text bold'>
+                                            Writer:{" "}
+                                        </span>
+                                        <span className='text'>
+                                            {writer?.map((d,i) => (
+                                                <span key={i}>
+                                                    {d.name}
+                                                    {writer.length - 1 !== i && ", "}
+                                                </span>    
+                                            ))}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {data?.created_by?.length > 0 && (
+                                    <div className='info'>
+                                        <span className='text bold'>
+                                            Creator:{" "}
+                                        </span>
+                                        <span className='text'>
+                                            {data?.created_by?.map((d: any, i: any) => (
+                                                <span key={i}>
+                                                    {d.name}
+                                                    {data?.created_by.length - 1 !== i && ", "}
+                                                </span>
+                                            ))}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        </ContentWrapper>
+                        <VideoPopup 
+                            show={show}
+                            handleVideoPopUp={handleVideoPopUp} 
+                            videoId={videoId}
+                        />
+                    </ContentWrapper>
                 </React.Fragment>
             )}
             </>) 
-            : (<></>)}
+            : (
+                <div className="detailsBannerSkeleton">
+                    <ContentWrapper>
+                        <div className="left skeleton"></div>
+                        <div className="right">
+                            <div className="row skeleton"></div>
+                            <div className="row skeleton"></div>
+                            <div className="row skeleton"></div>
+                            <div className="row skeleton"></div>
+                            <div className="row skeleton"></div>
+                            <div className="row skeleton"></div>
+                            <div className="row skeleton"></div>
+                        </div>
+                    </ContentWrapper>
+                </div>
+            )}
 
         
 

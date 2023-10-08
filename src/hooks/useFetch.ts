@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { fetchDataFromApi } from '../components/utils/api'
-import { MovieList, initialMovieList } from '../type/MovieBannerType';
 
 const useFetch = <T>(url: string) => {
     const [data, setData] = useState<T | null>();

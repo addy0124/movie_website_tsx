@@ -5,7 +5,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 
 type ImgProps = {
     src:string,
-    className?:string
+    className?:any
 }
 
 const Img: React.FC<ImgProps> = (img) => {
