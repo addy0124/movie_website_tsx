@@ -7,13 +7,14 @@ import SearchResult from './pages/searchResult/SearchResult';
 import Explore from './pages/explore/Explore';
 import { fetchDataFromApi } from './components/utils/api';
 import { initialState, reducer } from './store/homeSlice';
-import { Genres, MovieDataContext } from './components/context/MovieDataProvider';
+import { MovieDataContext } from './components/context/MovieDataProvider';
+import Footer from './components/footer/Footer';
+import Details from './pages/details/Details';
+import { Genres, Url } from './type/MovieBannerType';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { genres , getBannerurl, getGenres } = useContext(MovieDataContext);
-
-  console.log("genres : ", genres);
+  const { getBannerurl, getGenres } = useContext(MovieDataContext);
 
   useEffect(()=>{
     fetchApiConfig();
@@ -21,7 +22,7 @@ function App() {
   },[])
 
   const fetchApiConfig = () =>{
-    fetchDataFromApi("/configuration").then((res)=>{
+    fetchDataFromApi<any>("/configuration").then((res)=>{
 
       const url = {
         backdrop: res.images.secure_base_url + "original",
@@ -58,16 +59,17 @@ function App() {
 
   }
 
-
   return (
     <div className="App">
         <BrowserRouter>
         <Header />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/:mediaType/:id" element={<Details />}/>
             <Route path="/search/:query" element={<SearchResult />} />
-            <Route path='/explore/:mediaType' element={<Explore />} />
+            <Route path="/explore/:mediaType" element={<Explore />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
     </div>
   );

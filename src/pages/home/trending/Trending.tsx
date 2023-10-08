@@ -1,22 +1,20 @@
 import React, { useState } from 'react'
 import useFetch from '../../../hooks/useFetch';
 import ContentWrapper from '../../../components/contentWrapper/ContentWrapper';
-import { tab } from '@testing-library/user-event/dist/tab';
 import SwitchTabs from '../../../components/switchTabs/SwitchTabs';
 import Carousel from '../../../components/carousel/Carousel';
+import { MovieList } from '../../../type/MovieBannerType';
 
-type Props = {}
+type TrendingProps = {}
 
-const Trending: React.FC<Props> = (props) => {
+const Trending: React.FC<TrendingProps> = (props) => {
     const [endpoint, setEndpoint] = useState("day");
 
-    const { data, loading } = useFetch(`/trending/movie/${endpoint}`);
+    const { data, loading } = useFetch<MovieList>(`/trending/movie/${endpoint}`);
 
     const onTabChange = (tab: string, index?: number) => {
         setEndpoint(tab === "Day" ? "day" : "week");
     }
-
-    console.log("Trending data : ", data)
 
   return (
     <div className='carouselSection'>
@@ -25,7 +23,6 @@ const Trending: React.FC<Props> = (props) => {
             <SwitchTabs data={["Day", "Week"]} onTabChange={onTabChange} />
         </ContentWrapper>
         <Carousel data={data?.results} loading={loading} />
-
     </div>
   )
 }

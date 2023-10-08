@@ -1,18 +1,8 @@
 import React, { ReactNode, useState } from 'react'
+import { Genres, Url } from '../../type/MovieBannerType';
 
 type MovieDataContextProps = {
   children: ReactNode;
-}
-
-type Url = {
-  backdrop: string,
-  poster: string,
-  profile: string
-}
-
-export type Genres = {
-  id:number,
-  name:string
 }
 
 type MovieDataContext ={

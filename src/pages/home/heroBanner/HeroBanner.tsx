@@ -6,6 +6,7 @@ import Img from '../../../components/lazyLoadImage/Img';
 import './heroBanner.scss';
 import ContentWrapper from '../../../components/contentWrapper/ContentWrapper';
 import { useNavigate } from "react-router-dom";
+import { Movie, MovieList } from '../../../type/MovieBannerType';
 
 type Props = {}
 
@@ -13,7 +14,7 @@ const HeroBanner: React.FC<Props> = (Props) => {
     const [background, setBackground] = useState<string>("");
     const [query, setQuery] = useState<string>("");
     const { bannerurl } = useContext(MovieDataContext);
-    const { data, loading } = useFetch("/movie/upcoming");
+    const { data, loading } = useFetch<MovieList>("/movie/upcoming");
 
     const navigate = useNavigate();
 
@@ -37,7 +38,7 @@ const HeroBanner: React.FC<Props> = (Props) => {
                 <Img src={background} />
             </div>
         )}
-        <div className="opacity-layer">Hello</div>
+        <div className="opacity-layer"></div>
         <ContentWrapper>
             <div className="heroBannerContent">
                 <span className='title'>Welcome . </span>

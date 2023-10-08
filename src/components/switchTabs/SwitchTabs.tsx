@@ -7,7 +7,7 @@ type SwitchTabsProps = {
     onTabChange: (tab: string, index?: number) => void
 }
 
-const SwitchTabs: React.FC<SwitchTabsProps>= ({data,onTabChange}) => {
+const SwitchTabs: React.FC<SwitchTabsProps>= ({ data, onTabChange }) => {
     const [selectedTab, setSelectedTab] = useState<number>(0);
     const [left, setLeft] = useState<number>(0);
 

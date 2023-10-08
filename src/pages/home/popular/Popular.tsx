@@ -1,10 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
+import ContentWrapper from '../../../components/contentWrapper/ContentWrapper'
+import SwitchTabs from '../../../components/switchTabs/SwitchTabs'
+import useFetch from '../../../hooks/useFetch'
+import Carousel from '../../../components/carousel/Carousel'
+import { MovieList } from '../../../type/MovieBannerType'
 
-type Props = {}
+type PopularProps = {}
 
-const Popular = (props: Props) => {
+const Popular: React.FC<PopularProps> = ( props) => {
+  const [endpoint, setEndpoint] = useState("movie");
+
+  const { data, loading } = useFetch<MovieList>(`/${endpoint}/popular`);
+
+  const onTabChange = (tab: string, index?: number) => {
+    setEndpoint(tab === "Movies" ? "movie" : "tv");
+  }
+
   return (
-    <div>Popular</div>
+    <div className='carouselSection'>
+      <ContentWrapper>
+        <span className='carouselTitle'>What's Popular</span>
+        <SwitchTabs data={["Movies", "TV Shows"]} onTabChange={onTabChange} />
+      </ContentWrapper>
+      <Carousel data={data?.results} loading={loading} endpoint={endpoint}/>
+    </div>
   )
 }
 

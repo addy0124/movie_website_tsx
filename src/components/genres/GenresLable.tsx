@@ -1,18 +1,17 @@
 import React, { useContext } from 'react'
-import { Genres, MovieDataContext } from '../context/MovieDataProvider';
+import { MovieDataContext } from '../context/MovieDataProvider';
 
 import './genresStyled.scss';
+import { Genres } from '../../type/MovieBannerType';
 
 type GenresProps = {
-  data: number[]
+  data: number[]; 
 }
 
 const GenresLable: React.FC<GenresProps> = ({ data }) => {
   const { genres } = useContext(MovieDataContext);
-  
-  const filteredGenres: Genres[] = genres.filter((genre) => data.includes(genre.id));
 
-  console.log("filteredGenres : ", filteredGenres);
+  const filteredGenres: Genres[] = genres.filter((genre) => data.includes(genre.id));
 
   return (
     <div className='genres'>
